@@ -3,3 +3,5 @@
 
 I'm Marius Gzegozevskis
 
+I'm software developer
+

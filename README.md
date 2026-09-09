@@ -1,8 +1,5 @@
 # structured-2026
 
 
-I'm Marius
+I'm Marius Gzegozevskis
 
-Here is my code: 
-
-`id int`

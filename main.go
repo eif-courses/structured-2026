@@ -10,8 +10,12 @@ func printStatus(status string) {
 	fmt.Println("-------------------------------------------------")
 }
 
-func main() {
+func printFunction() {
+	fmt.Println("IT WORKS!!!!")
 
+}
+
+func conditionalsStatements() {
 	status := "IN PROGRESS"
 	done := true
 	isReady := true
@@ -60,6 +64,48 @@ func main() {
 			fmt.Println(temp[j])
 		}
 		break
+
+	}
+
+}
+
+var n int
+var options = [][]string{
+	{"1. Print your status", "printStatus"},
+	{"2. Check conditional statements", "condStaments"},
+	{"0. Exit", "exit"}}
+
+var actions = map[string]func(){
+	"printStatus":  printFunction,
+	"condStaments": printFunction,
+}
+
+var actionNumber int
+
+func main() {
+
+	for {
+		fmt.Println("Choose one of the following options:")
+
+		// {"1. Print your status", "printStatus"},
+
+		for _, option := range options {
+			for _, opt := range option {
+				fmt.Printf(",%s ", opt)
+
+			}
+			fmt.Println()
+		}
+
+		fmt.Scan(&n)
+
+		selectedOption := options[n-1][1]
+
+		if fn, ok := actions[selectedOption]; ok {
+			fn()
+		} else {
+			fmt.Println("Unknown action")
+		}
 
 	}
 

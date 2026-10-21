@@ -82,8 +82,7 @@ var actions = map[string]func(){
 
 var actionNumber int
 
-func main() {
-
+func mainblock() {
 	for {
 		fmt.Println("Choose one of the following options:")
 
@@ -108,5 +107,54 @@ func main() {
 		}
 
 	}
+}
+
+// IsDone
+//
+
+type Task struct {
+	ID          int
+	Description string
+	Status      bool
+}
+
+var TaskList *[]Task
+
+var counter int = 0
+
+func createTask(Desc string) {
+	task := Task{ID: counter, Description: Desc, Status: false}
+	TaskList = append(TaskList, task)
+	counter++
+}
+
+func printAllTasks() {
+
+	for i := 0; i < len(TaskList); i++ {
+		fmt.Printf("%d. %s %t \n", TaskList[i].ID, TaskList[i].Description, TaskList[i].Status)
+	}
+}
+
+func main() {
+
+	var description string
+	var status int
+
+	fmt.Println("ENTER DESCRIPTION")
+
+	fmt.Scan(&description)
+
+	fmt.Println("Pick action start or stop")
+	fmt.Scan(&status)
+
+	createTask(description)
+
+	if status == 1 {
+		TaskList[0].Status = true
+	} else {
+		TaskList[0].Status = false
+	}
+
+	printAllTasks()
 
 }

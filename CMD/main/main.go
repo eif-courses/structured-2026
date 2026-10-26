@@ -1,7 +1,11 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"os"
+	"strconv"
+	"strings"
 )
 
 func printStatus(status string) {
@@ -118,7 +122,9 @@ type Task struct {
 	Status      bool
 }
 
-var TaskList *[]Task
+// slice of tasks
+// list of tasks
+var TaskList []Task
 
 var counter int = 0
 
@@ -126,6 +132,28 @@ func createTask(Desc string) {
 	task := Task{ID: counter, Description: Desc, Status: false}
 	TaskList = append(TaskList, task)
 	counter++
+}
+
+// task1 , task2, task3 .. taskN
+// 100000000
+// CPU resources
+// Nil is points to zero address in memory
+func findTask(id int) *Task {
+	for i := 0; i < len(TaskList); i++ {
+		if TaskList[i].ID == id {
+			return &TaskList[i]
+		}
+	}
+	return nil
+}
+
+func setTaskStatus(id int, status bool) {
+	task := findTask(id)
+	if task != nil {
+		task.Status = status
+	} else {
+		fmt.Println("Task not found")
+	}
 }
 
 func printAllTasks() {
@@ -137,24 +165,51 @@ func printAllTasks() {
 
 func main() {
 
-	var description string
-	var status int
+	reader := bufio.NewReader(os.Stdin)
 
-	fmt.Println("ENTER DESCRIPTION")
-
-	fmt.Scan(&description)
-
-	fmt.Println("Pick action start or stop")
-	fmt.Scan(&status)
-
-	createTask(description)
-
-	if status == 1 {
-		TaskList[0].Status = true
-	} else {
-		TaskList[0].Status = false
+	readLine := func() string {
+		line, _ := reader.ReadString('\n')
+		return strings.TrimSpace(line)
 	}
 
-	printAllTasks()
+	readInt := func() (int, error) {
+		return strconv.Atoi(readLine())
+	}
 
+	for {
+
+		var description string
+		var status int
+
+		fmt.Println("ENTER DESCRIPTION")
+		description = readLine()
+
+		createTask(description)
+
+		printAllTasks()
+
+		var input int
+
+		fmt.Println("ENTER TASK ID TO UPDATE STATUS")
+		input, _ = readInt()
+
+		taskID := findTask(input)
+
+		if taskID == nil {
+			fmt.Println("Task not found")
+			return
+		}
+
+		fmt.Println("ENTER STATUS (1 for done, 0 for not done)")
+
+		status, _ = readInt()
+
+		if status == 1 {
+			setTaskStatus(input, true)
+		} else {
+			setTaskStatus(input, false)
+		}
+
+		printAllTasks()
+	}
 }

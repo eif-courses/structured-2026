@@ -2,7 +2,9 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -163,35 +165,54 @@ func printAllTasks() {
 	}
 }
 
+func readLine(reader *bufio.Reader) string {
+	line, _ := reader.ReadString('\n')
+	return strings.TrimSpace(line)
+}
+
+func readInt(reader *bufio.Reader) (int, error) {
+
+	val, err := strconv.Atoi(readLine(reader))
+	if err != nil {
+		return 0, err // Return the error if it's not a valid number
+	}
+
+	// If you specifically want to handle a sentinel value like -1 or check something:
+	if val > 10 {
+		return -1, errors.New("TASK ID NOT EXIST")
+	}
+
+	return val, nil
+
+}
+
+type ConsoleInputVariables struct {
+	Description string
+	Status      int
+	Input       int
+}
+
 func main() {
 
 	reader := bufio.NewReader(os.Stdin)
 
-	readLine := func() string {
-		line, _ := reader.ReadString('\n')
-		return strings.TrimSpace(line)
-	}
-
-	readInt := func() (int, error) {
-		return strconv.Atoi(readLine())
-	}
+	consoleVariables := ConsoleInputVariables{Description: "", Status: 0, Input: 0}
 
 	for {
 
-		var description string
-		var status int
-
 		fmt.Println("ENTER DESCRIPTION")
-		description = readLine()
+		consoleVariables.Description = readLine(reader)
 
-		createTask(description)
+		createTask(consoleVariables.Description)
 
 		printAllTasks()
 
-		var input int
-
 		fmt.Println("ENTER TASK ID TO UPDATE STATUS")
-		input, _ = readInt()
+		input, err := readInt(reader)
+
+		if err != nil {
+			log.Fatal(err)
+		}
 
 		taskID := findTask(input)
 
@@ -201,10 +222,13 @@ func main() {
 		}
 
 		fmt.Println("ENTER STATUS (1 for done, 0 for not done)")
+		consoleVariables.Status, err = readInt(reader)
 
-		status, _ = readInt()
+		if err != nil {
+			log.Fatal(err)
+		}
 
-		if status == 1 {
+		if consoleVariables.Status == 1 {
 			setTaskStatus(input, true)
 		} else {
 			setTaskStatus(input, false)
